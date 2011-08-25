@@ -1,3 +1,4 @@
+=begin
 module Physcon
 	class Model
 		def initialize args={}
@@ -19,3 +20,4 @@ module Physcon
 	end
 end
 
+=end

@@ -1,13 +1,16 @@
 # coding: UTF-8
 
-%w[mongo time digest/sha1 unicode_utils].each {|r| require r}
+%w[mongo time digest/sha1 unicode_utils raser/utils/db/pgconnection].each {|r| require r}
 
 module Physcon
 	class Model
-		attr_reader :mongo, :lib
+		attr_reader :mongo, :pg, :lib
 		def initialize config={}
-			if config['mongo'] && config['mongo']['host'] && config['mongo']['db_name']
-				@mongo = Mongo::Connection.new(config['mongo']['host']).db(config['mongo']['db_name'])
+			if config['mongo'] && config['mongo']['host'] && config['mongo']['dbname']
+				@mongo = Mongo::Connection.new(config['mongo']['host']).db(config['mongo']['dbname'])
+			end
+			if config['pg']
+				@pg = Raser::Db::PgConnection.new(config['pg'])
 			end
 			@lib = Lib.new self, config
 		end
