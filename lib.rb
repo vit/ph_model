@@ -36,6 +36,23 @@ module Physcon
 				}
 			end
 		end
+		def get_doc_ancestors id
+			rez = []
+			while true do
+				doc = @docs.find_one( {'_meta.class' => LIB_DOC_CLASS, '_id' => id} )
+				d = nil
+				if doc && doc['_meta']
+					d = {
+						_id: id,
+						title: doc['info']['title']
+					}
+					id = doc['_meta']['parent']
+				end
+				break unless d
+				rez.unshift d
+			end
+			rez
+		end
 	end
 end
 
