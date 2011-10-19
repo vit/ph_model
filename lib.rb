@@ -4,6 +4,7 @@
 
 module Physcon
 	class Lib
+		#LIB_DOC_CLASS = 'LIB:DOC:PAPER'
 		LIB_DOC_CLASS = 'LIB:DOC'
 		attr_reader :mongo, :lib
 		def initialize model, config={}
@@ -17,9 +18,10 @@ module Physcon
 				_id: _id,
 				_meta: {class: LIB_DOC_CLASS, parent: parent, dir: dir, ctime: ts, mtime: ts},
 				info: info
+				#info: {'title' => 'qqq %', 'abstract' => 'www %'}
 			})
 			{
-				_id: _id
+				'_id' => _id
 			}
 		end
 		def get_doc_info id
@@ -31,8 +33,8 @@ module Physcon
 				{'_meta.class' => LIB_DOC_CLASS, '_meta.parent' => id}
 			).map do |d|
 				{
-					_id: d['_id'],
-					info: d['info']
+					'_id' => d['_id'],
+					'info' => d['info']
 				}
 			end
 		end
@@ -43,8 +45,8 @@ module Physcon
 				d = nil
 				if doc && doc['_meta']
 					d = {
-						_id: id,
-						title: doc['info']['title']
+						'_id' => id,
+						'title' => doc['info']['title']
 					}
 					id = doc['_meta']['parent']
 				end
