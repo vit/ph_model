@@ -4,7 +4,7 @@
 
 module Physcon
 	class Model
-		attr_reader :mongo, :pg, :lib
+		attr_reader :mongo, :pg, :lib, :coms
 		def initialize config={}
 			if config['mongo'] && config['mongo']['host'] && config['mongo']['dbname']
 				@mongo = Mongo::Connection.new(config['mongo']['host']).db(config['mongo']['dbname'])
@@ -13,6 +13,7 @@ module Physcon
 				@pg = Raser::Db::PgConnection.new(config['pg'])
 			end
 			@lib = Lib.new self, config
+			@coms = Coms.new self, config
 		end
 	end
 end

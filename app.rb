@@ -3,7 +3,7 @@
 module Physcon
 
 	curr_path =  File.expand_path('../', __FILE__)
-	%w[model lib].each{ |r| require "#{curr_path}/#{r}" }
+	%w[model lib coms].each{ |r| require "#{curr_path}/#{r}" }
 
 	TS = -> { Time.now.utc.iso8601(10) }
 	IdSeq = -> args=({}) {
