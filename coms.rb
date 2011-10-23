@@ -25,6 +25,10 @@ module Physcon
 				acc
 			end
 		end
+		def get_conf_paper_info id, papnum
+			id = id.to_i
+			Physcon::App.model.pg.query_one "SELECT p.*, concatpaperauthors(%s, p.papnum) as authors FROM paper as p where p.context=%s and p.papnum=%s and p.finaldecision>1", id, id, papnum
+		end
 	end
 end
 
