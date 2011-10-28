@@ -66,6 +66,17 @@ module Physcon
 				#new_doc(id, false, {title: d['title'], abstract: d['abstract']})
 			end
 		end
+		def remove_doc id
+			@docs.remove({
+				_id: id,
+				'_meta.class' => LIB_DOC_CLASS
+			})
+		end
+		def remove_docs list
+			list.each do |doc|
+				remove_doc doc['_id']
+			end
+		end
 	end
 end
 
