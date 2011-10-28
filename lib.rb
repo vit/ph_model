@@ -55,12 +55,15 @@ module Physcon
 			end
 			rez
 		end
-		def import_doc_from_coms context, papnum
+		def import_doc_from_coms id, context, papnum
+			d = @model.coms.get_conf_paper_info context, papnum
+			new_doc(id, false, {title: d['title'], abstract: d['abstract']})
 		end
 		def import_docs_from_coms id, list
-			list.map do |doc|
-				d = @model.coms.get_conf_paper_info doc['context'], doc['papnum']
-				new_doc(id, false, {title: d['title'], abstract: d['abstract']})
+			list.each do |doc|
+				import_doc_from_coms id, doc['context'], doc['papnum']
+				#d = @model.coms.get_conf_paper_info doc['context'], doc['papnum']
+				#new_doc(id, false, {title: d['title'], abstract: d['abstract']})
 			end
 		end
 	end

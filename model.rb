@@ -11,6 +11,7 @@ module Physcon
 			end
 			if config['pg']
 				@pg = Raser::Db::PgConnection.new(config['pg'])
+				@pg.query "SET CLIENT_ENCODING TO 'WIN1251';"
 			end
 			@lib = Lib.new self, config
 			@coms = Coms.new self, config
