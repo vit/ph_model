@@ -28,6 +28,10 @@ module Physcon
 			res = @docs.find_one({'_meta.class' => LIB_DOC_CLASS, '_id' => id})
 			res ? res['info'] : nil
 		end
+		def set_doc_info id, info
+			@docs.update({'_meta.class' => LIB_DOC_CLASS, '_id' => id}, {'$set' => {'info' => info, '_meta.mtime' => Physcon::TS[]}})
+			{_id: id}
+		end
 		def get_doc_children id
 			@docs.find(
 				{'_meta.class' => LIB_DOC_CLASS, '_meta.parent' => id}
@@ -70,7 +74,7 @@ module Physcon
 			@docs.remove({
 				_id: id,
 				'_meta.class' => LIB_DOC_CLASS
-			})
+			}) if get_doc_children(id).empty?
 		end
 		def remove_docs list
 			list.each do |doc|
