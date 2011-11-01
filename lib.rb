@@ -34,7 +34,17 @@ module Physcon
 		end
 		def set_doc_info id, info
 			@docs.update({'_meta.class' => LIB_DOC_CLASS, '_id' => id}, {'$set' => {'info' => info, '_meta.mtime' => Physcon::TS[]}})
-			{_id: id}
+		#	{_id: id}
+			id
+		end
+		def get_doc_authors id
+			res = @docs.find_one({'_meta.class' => LIB_DOC_CLASS, '_id' => id})
+			res && res['authors'] ? res['authors'] : []
+		end
+		def set_doc_authors id, authors
+			@docs.update({'_meta.class' => LIB_DOC_CLASS, '_id' => id}, {'$set' => {'authors' => authors, '_meta.mtime' => Physcon::TS[]}})
+		#	{_id: id}
+			id
 		end
 		def remove_doc id
 			if get_doc_children(id).empty?
@@ -113,6 +123,15 @@ module Physcon
 						put_doc_file doc_id, f, file_info
 					end
 				end
+				authors = @model.coms.get_conf_paper_authors(context, papnum).map do |row|
+					{
+						fname: row['fname'],
+						lname: row['lname'],
+						pin: row['pin']
+					}
+				#	row
+				end
+				set_doc_authors doc_id, authors
 			end
 			doc_id
 		end

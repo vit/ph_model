@@ -30,6 +30,21 @@ module Physcon
 			papnum = papnum.to_i
 			Physcon::App.model.pg.query_one "SELECT p.*, concatpaperauthors(%s, p.papnum) as authors FROM paper as p where p.context=%s and p.papnum=%s and p.finaldecision>1", id, id, papnum
 		end
+		def get_conf_paper_authors id, papnum
+			id = id.to_i
+			papnum = papnum.to_i
+			@model.pg.query_inject [], "
+				SELECT a.*, u.*, t.shortstr AS usertitle, c.name AS countryname
+				FROM
+					((author AS a LEFT JOIN userpin AS u ON a.autpin=u.pin) 
+					LEFT JOIN title AS t ON u.title=t.titleid)
+					LEFT JOIN country AS c ON u.country=c.cid
+				WHERE a.context=%s AND a.papnum=%s
+				ORDER BY u.pin", id, papnum do |acc, row|
+				acc << row
+				acc
+			end
+		end
 		def get_conf_paper_file id, papnum
 			id = id.to_i
 			papnum = papnum.to_i
