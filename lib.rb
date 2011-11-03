@@ -15,12 +15,15 @@ module Physcon
 			@grid = Mongo::Grid.new @db, 'docs'
 			@files = @db['docs.files']
 		end
-		def new_doc parent, dir, info
+		def new_doc parent, info, args={}
 			_id = Physcon::SEQ[]
 			ts = Physcon::TS[]
+			meta = {class: LIB_DOC_CLASS, parent: parent, ctime: ts, mtime: ts}
+			meta['origin'] = args['origin'] if args['origin']
 			@docs.insert({
 				_id: _id,
-				_meta: {class: LIB_DOC_CLASS, parent: parent, dir: dir, ctime: ts, mtime: ts},
+				#_meta: {class: LIB_DOC_CLASS, parent: parent, dir: dir, ctime: ts, mtime: ts},
+				_meta: meta,
 				info: info
 			})
 		#	{
@@ -31,6 +34,10 @@ module Physcon
 		def get_doc_info id
 			res = @docs.find_one({'_meta.class' => LIB_DOC_CLASS, '_id' => id})
 			res ? res['info'] : nil
+		end
+		def get_doc_meta id
+			res = @docs.find_one({'_meta.class' => LIB_DOC_CLASS, '_id' => id})
+			res ? res['_meta'] : nil
 		end
 		def set_doc_info id, info
 			@docs.update({'_meta.class' => LIB_DOC_CLASS, '_id' => id}, {'$set' => {'info' => info, '_meta.mtime' => Physcon::TS[]}})
@@ -116,7 +123,8 @@ module Physcon
 			doc_id = nil
 			d = @model.coms.get_conf_paper_info context, papnum
 			if d
-				doc_id = new_doc(id, false, {title: d['title'], abstract: d['abstract']})
+				doc_id = new_doc(id, {title: d['title'], abstract: d['abstract']}, {'origin' => {name: 'coms', context: context, papnum: papnum}})
+				#doc_id = new_doc(id, {title: d['title'], abstract: d['abstract']})
 				file_info = @model.coms.get_conf_paper_file context, papnum
 				if file_info
 					File.open file_info[:file_path] do |f|
@@ -138,8 +146,6 @@ module Physcon
 		def import_docs_from_coms id, list
 			list.each do |doc|
 				import_doc_from_coms id, doc['context'], doc['papnum']
-				#d = @model.coms.get_conf_paper_info doc['context'], doc['papnum']
-				#new_doc(id, false, {title: d['title'], abstract: d['abstract']})
 			end
 		end
 		def remove_doc id
