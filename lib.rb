@@ -98,7 +98,8 @@ module Physcon
 			).map do |d|
 				{
 					'_id' => d['_id'],
-					'info' => d['info']
+					'info' => d['info'],
+					'authors' => d['authors']
 				}
 			end
 		end
