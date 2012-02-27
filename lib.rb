@@ -95,7 +95,8 @@ module Physcon
 		def get_doc_children id
 			@docs.find(
 				{'_meta.class' => LIB_DOC_CLASS, '_meta.parent' => id}
-			).map do |d|
+			#).map do |d|
+			).sort( [[ '_meta.ctime', -1]] ).map do |d|
 				{
 					'_id' => d['_id'],
 					'info' => d['info'],

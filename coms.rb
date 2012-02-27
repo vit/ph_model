@@ -20,7 +20,8 @@ module Physcon
 		def get_conf_accepted_papers_list id
 			id = id.to_i
 			#@res_list = Physcon::App.model.pg.query_inject [], "SELECT * FROM paper where context=%s and finaldecision>1", id do |acc, row|
-			@res_list = Physcon::App.model.pg.query_inject [], "SELECT p.*, concatpaperauthors(%s, p.papnum) as authors FROM paper as p where p.context=%s and p.finaldecision>1", id, id do |acc, row|
+#			@res_list = Physcon::App.model.pg.query_inject [], "SELECT p.*, concatpaperauthors(%s, p.papnum) as authors FROM paper as p where p.context=%s and p.finaldecision>1", id, id do |acc, row|
+			@res_list = Physcon::App.model.pg.query_inject [], "SELECT p.*, concatpaperauthors(%s, p.papnum) as authors FROM paper as p where p.context=%s and p.finaldecision>1 order by p.papnum desc", id, id do |acc, row|
 				acc << row
 				acc
 			end
