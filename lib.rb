@@ -7,7 +7,8 @@ module Physcon
 		#LIB_DOC_CLASS = 'LIB:DOC:PAPER'
 		LIB_DOC_CLASS = 'LIB:DOC'
 		LIB_DOC_FILE_CLASS = 'LIB:DOC:FILE'
-		attr_reader :mongo, :lib
+		#attr_reader :mongo, :lib
+		attr_reader :docs
 		def initialize model, config={}
 			@db = model.mongo
 			@model = model
@@ -160,6 +161,13 @@ module Physcon
 		def remove_docs list
 			list.each do |doc|
 				remove_doc doc['_id']
+			end
+		end
+		def each_doc
+			@docs.find(
+				{'_meta.class' => LIB_DOC_CLASS}
+			).each do |d|
+				yield d
 			end
 		end
 	end

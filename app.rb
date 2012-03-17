@@ -13,6 +13,15 @@ module Physcon
 	}
 	SEQ = IdSeq[domain: 'localhost', size: 12]
 
+	def self.id_to_int64 _id
+		id = _id.to_i(16) & 0xffffffffffffffff
+		id
+	end
+	def self.id_from_int64 id
+		_id = sprintf("%012x", id)
+		_id
+	end
+
 	class App
 		class << self
 		#	attr_reader :config, :model
