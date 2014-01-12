@@ -151,6 +151,31 @@ module Physcon
 				import_doc_from_coms id, doc['context'], doc['papnum']
 			end
 		end
+		def update_imported_file parent_id, doc_id
+			rez = ''
+			doc = @docs.find_one( {'_meta.class' => LIB_DOC_CLASS, '_id' => doc_id} )
+			if doc && doc['_meta'] && doc['_meta']['origin'] && doc['_meta']['origin']['name']=='coms'
+				context = doc['_meta']['origin']['context']
+				papnum = doc['_meta']['origin']['papnum']
+				if context && papnum
+					file_info = @model.coms.get_conf_paper_file context, papnum
+					if file_info
+						File.open file_info[:file_path] do |f|
+							put_doc_file doc_id, f, file_info
+						end
+					end
+					rez = papnum
+				end
+			end
+			rez
+		end
+		def update_imported_files parent_id, list
+			rez = []
+			list.each do |doc|
+				rez << update_imported_file(parent_id, doc['_id'])
+			end
+			rez
+		end
 		def remove_doc id
 			remove_doc_file id
 			@docs.remove({
